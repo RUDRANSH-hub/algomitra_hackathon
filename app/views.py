@@ -90,6 +90,8 @@ def index(request):
 
     df = pd.concat([df1, df2, df3, df4, df5, df6], axis=0)
     df.reset_index(level=0, inplace=True)
+    df = df.iloc[:, :8]  # Select only the first 8 columns
+
     df.columns = ['Date', 'Ticker', 'Open', 'High', 'Low', 'Close', 'Adj_Close', 'Volume']
     convert_dict = {'Date': object}
     df = df.astype(convert_dict)
@@ -192,7 +194,7 @@ def predict(request, ticker_value, number_of_days):
     forecast_out = int(number_of_days)
     df_ml['Prediction'] = df_ml[['Adj Close']].shift(-forecast_out)
     # Splitting data for Test and Train
-    X = np.array(df_ml.drop(['Prediction'],1))
+    X = np.array(df_ml.drop(['Prediction'], axis=1))
     X = preprocessing.scale(X)
     X_forecast = X[-forecast_out:]
     X = X[:-forecast_out]
